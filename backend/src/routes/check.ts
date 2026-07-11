@@ -1,10 +1,11 @@
 import { Router, Request, Response } from 'express';
 import { detector } from '../detectors';
 import { CheckPIIRequest, CheckPIIResponse } from '../schemas';
+import { checkLimiter } from '../middleware/rateLimiter';
 
 const router = Router();
 
-router.post('/check', (req: Request, res: Response) => {
+router.post('/check', checkLimiter, (req: Request, res: Response) => {
   try {
     const parsed = CheckPIIRequest.parse(req.body);
     const detections = detector.detect(parsed.text, parsed.detectionTypes);
